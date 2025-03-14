@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON
- 
-// Connect to MongoDB (Without .env file)
+
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -18,14 +18,18 @@ const userSchema = new mongoose.Schema({
 });
 const userModel = mongoose.model("emp", userSchema);
 
-// Create & Save an Employee
-const emp1 = new userModel({
-    name: "Harini",
-    age: 23
+// Sample Route (Fixes "Cannot GET /")
+app.get("/", (req, res) => {
+    res.send("Hello, your Express app is running on Render! 🚀");
 });
-emp1.save();
 
-// Dynamic Port Handling (Required for Render)
+// Get all users from MongoDB
+app.get("/users", async (req, res) => {
+    const users = await userModel.find();
+    res.json(users);
+});
+
+// Dynamic Port Handling
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
